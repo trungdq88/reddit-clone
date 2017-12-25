@@ -1,7 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, FlatList, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Button,
+  FlatList,
+  Alert,
+  Modal,
+} from 'react-native';
 import LinkItem from './LinkItem.js';
 import TopicDatabase from './TopicDatabase.js';
+
+const TOPIC_MAX_LENGTH = 50;
 
 export default class App extends React.Component {
   topics = new TopicDatabase();
@@ -9,6 +20,8 @@ export default class App extends React.Component {
 
   state = {
     topics: [],
+    text: '',
+    newTopicModalVisible: false,
   };
 
   componentDidMount() {
@@ -21,16 +34,30 @@ export default class App extends React.Component {
     this.subscription && this.subscription.dispose();
   }
 
-  _onPressItem = item => Alert.alert('Hello ' + item);
+  onPressItem = item => Alert.alert('Hello ' + item);
 
-  _onSubmitTopic = () => {
-    this.topics.add({ value: Math.random() });
+  onSubmitTopic = () => {
+    this.topics.add({ value: this.state.text });
+    this.setState({
+      text: '',
+      newTopicModalVisible: false,
+    });
   };
 
-  _keyExtractor = item => item.value;
+  onModalClose = e => {
+    console.log(e);
+  };
 
-  _renderItem = ({ item }) => (
-    <LinkItem {...item} onPressItem={this._onPressItem} />
+  keyExtractor = item => item.value;
+
+  openSubmitModal = () => {
+    this.setState({
+      newTopicModalVisible: true,
+    });
+  };
+
+  renderItem = ({ item }) => (
+    <LinkItem {...item} onPressItem={this.onPressItem} />
   );
 
   render() {
@@ -41,17 +68,80 @@ export default class App extends React.Component {
             <Button
               title="+ Submit Topic"
               accessibilityLabel="Submit Topic"
-              onPress={this._onSubmitTopic}
+              onPress={this.openSubmitModal}
             />
           </View>
         </View>
         <View style={{ flex: 9, width: '100%' }}>
           <FlatList
             data={this.state.topics}
-            renderItem={this._renderItem}
-            keyExtractor={this._keyExtractor}
+            renderItem={this.renderItem}
+            keyExtractor={this.keyExtractor}
           />
         </View>
+        <Modal
+          visible={this.state.newTopicModalVisible}
+          onRequestClose={this.onModalClose}
+          transparent={true}
+        >
+          <View
+            style={{
+              backgroundColor: '#00000055',
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <View
+              style={{
+                padding: 20,
+                backgroundColor: '#fff',
+                borderRadius: 5,
+                minWidth: '80%',
+              }}
+            >
+              <View style={{ paddingBottom: 20 }}>
+                <Text
+                  style={{ textAlign: 'left', fontSize: 20, marginBottom: 15 }}
+                >
+                  Enter topic:
+                </Text>
+                {/* TODO: how to make it auto scroll to bottom when enter new line? */}
+                <TextInput
+                  style={{
+                    maxHeight: 200,
+                    paddingBottom: 15,
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                  onChangeText={text => this.setState({ text })}
+                  value={this.state.text}
+                  multiline={true}
+                  numberOfLines={2}
+                  placeholder="Enter topic here..."
+                  blurOnSubmit={false}
+                />
+              </View>
+              <Text
+                style={{
+                  textAlign: 'right',
+                  color:
+                    this.state.text.length > TOPIC_MAX_LENGTH ? 'red' : '#888',
+                  marginBottom: 10,
+                }}
+              >
+                {this.state.text.length}/{TOPIC_MAX_LENGTH}
+              </Text>
+              <Button
+                hardwareAccelerated={true}
+                disabled={this.state.text.length > TOPIC_MAX_LENGTH}
+                title="+ Submit"
+                accessibilityLabel="Submit"
+                onPress={this.onSubmitTopic}
+              />
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
