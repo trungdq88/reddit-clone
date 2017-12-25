@@ -1,16 +1,36 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Alert } from 'react-native';
 import LinkItem from './LinkItem.js';
+import TopicDatabase from './TopicDatabase.js';
 
 export default class App extends React.Component {
+  topics = new TopicDatabase();
+  subscription = null;
+
   state = {
-    data: [{ value: 'A' }, { value: 'B' }],
+    topics: [],
   };
+
+  componentDidMount() {
+    this.subscription = this.topics.subscribe(topics =>
+      this.setState({ topics }),
+    );
+  }
+
+  componentWillUnmount() {
+    this.subscription && this.subscription.dispose();
+  }
 
   _onPressItem = item => Alert.alert('Hello ' + item);
 
+  _onSubmitTopic = () => {
+    this.topics.add({ value: Math.random() });
+  };
+
+  _keyExtractor = item => item.value;
+
   _renderItem = ({ item }) => (
-    <LinkItem key={item.value} {...item} onPressItem={this._onPressItem} />
+    <LinkItem {...item} onPressItem={this._onPressItem} />
   );
 
   render() {
@@ -19,18 +39,18 @@ export default class App extends React.Component {
         <View sytle={{ flex: 1 }}>
           <View style={{ padding: 20 }}>
             <Button
-              title="+ Submit Link"
-              accessibilityLabel="Submit Link"
-              onPress={e => {
-                this.setState({
-                  data: this.state.data.concat({ value: Math.random() }),
-                });
-              }}
+              title="+ Submit Topic"
+              accessibilityLabel="Submit Topic"
+              onPress={this._onSubmitTopic}
             />
           </View>
         </View>
         <View style={{ flex: 9, width: '100%' }}>
-          <FlatList data={this.state.data} renderItem={this._renderItem} />
+          <FlatList
+            data={this.state.topics}
+            renderItem={this._renderItem}
+            keyExtractor={this._keyExtractor}
+          />
         </View>
       </View>
     );
