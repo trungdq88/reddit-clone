@@ -34,7 +34,15 @@ export default class TopicDatabase {
     this.notify();
   };
 
+  // TODO: need better data structure
+  sort = () => {
+    this.topics.sort((a, b) => {
+      return a.upvote - a.downvote < b.upvote - b.downvote ? 1 : -1;
+    });
+  };
+
   notify = () => {
+    this.sort();
     // TODO: this implementation do not guarantee subscrition order.
     Object.values(this.subscriptions)
       .filter(callback => callback !== null)

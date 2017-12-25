@@ -1,4 +1,5 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { composeWithDevTools } from 'remote-redux-devtools';
 import thunk from 'redux-thunk';
 import TopicDatabase from '../utils/TopicDatabase.js';
 import reducer from './reducer.js';
@@ -9,7 +10,7 @@ const db = new TopicDatabase();
 // Redux store
 const store = createStore(
   reducer,
-  applyMiddleware(thunk.withExtraArgument(db)),
+  composeWithDevTools(applyMiddleware(thunk.withExtraArgument(db))),
 );
 
 // Receive new update from db

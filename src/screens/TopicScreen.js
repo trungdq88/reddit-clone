@@ -61,7 +61,7 @@ class TopicScreen extends React.Component {
             </View>
             <View style={{ margin: 10 }}>
               <Button
-                title={`▲ Downvote (${topic.downvote})`}
+                title={`▼ Downvote (${topic.downvote})`}
                 color="orange"
                 accessibilityLabel="Down vote"
                 onPress={this.downvote}

@@ -28,12 +28,10 @@ class HomeScreen extends React.Component {
     newTopicModalVisible: false,
   };
 
-  componentDidMount() {
-    console.log('mount');
-  }
-
   onPressItem = item =>
-    this.props.navigation.navigate('Topic', { topicId: item.id });
+    // TODO: Fast clicks trigger multiple navigation
+    // https://github.com/react-community/react-navigation/issues/271
+    this.props.navigation.navigate('Topic', { topicId: item.id, key: item.id });
 
   onSubmitTopic = content => {
     this.props.actions.addTopic(content);
