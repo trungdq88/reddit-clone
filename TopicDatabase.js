@@ -6,7 +6,7 @@ export default class TopicDatabase {
   };
 
   add = value => {
-    this.topics = this.topics.concat(value);
+    this.topics = [value].concat(this.topics);
     this.notify();
   };
 
