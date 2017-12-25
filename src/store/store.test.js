@@ -7,6 +7,6 @@ describe('store.js', () => {
   });
 
   it('should have init state', () => {
-    expect(store.getState()).toEqual({ topics: [] });
+    expect(store.getState()).toEqual({ topics: [], topicDetail: {} });
   });
 });

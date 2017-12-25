@@ -15,4 +15,12 @@ export default {
     type: 'TOPIC_DETAIL_CLEAN_UP',
     data: topicId,
   }),
+
+  upvote: topicId => (dispatch, getState, db) => {
+    db.upvote(topicId);
+  },
+
+  downvote: topicId => (dispatch, getState, db) => {
+    db.downvote(topicId);
+  },
 };

@@ -28,6 +28,10 @@ class HomeScreen extends React.Component {
     newTopicModalVisible: false,
   };
 
+  componentDidMount() {
+    console.log('mount');
+  }
+
   onPressItem = item =>
     this.props.navigation.navigate('Topic', { topicId: item.id });
 

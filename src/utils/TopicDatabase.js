@@ -22,6 +22,18 @@ export default class TopicDatabase {
     return this.topics.find(_ => _.id === topicId);
   };
 
+  upvote = topicId => {
+    const topicIndex = this.topics.findIndex(_ => _.id === topicId);
+    this.topics[topicIndex].upvote += 1;
+    this.notify();
+  };
+
+  downvote = topicId => {
+    const topicIndex = this.topics.findIndex(_ => _.id === topicId);
+    this.topics[topicIndex].downvote += 1;
+    this.notify();
+  };
+
   notify = () => {
     // TODO: this implementation do not guarantee subscrition order.
     Object.values(this.subscriptions)

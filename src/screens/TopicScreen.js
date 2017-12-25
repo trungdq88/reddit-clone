@@ -22,9 +22,15 @@ class TopicScreen extends React.Component {
     this.props.actions.cleanUpTopicDetail(this.topicId);
   }
 
-  upvote = () => this.props.actions.upvote(this.topicId);
+  upvote = () => {
+    this.props.actions.upvote(this.topicId);
+    this.props.actions.getTopicDetail(this.topicId);
+  };
 
-  downvote = () => this.props.actions.downvote(this.topicId);
+  downvote = () => {
+    this.props.actions.downvote(this.topicId);
+    this.props.actions.getTopicDetail(this.topicId);
+  };
 
   render() {
     const topic = this.props.topicDetail[this.topicId];
@@ -34,7 +40,12 @@ class TopicScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View
-          style={{ flex: 5, justifyContent: 'center', alignItems: 'center' }}
+          style={{
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 20,
+          }}
         >
           <Text>{topic.content}</Text>
         </View>
@@ -43,14 +54,14 @@ class TopicScreen extends React.Component {
           <View style={{ flexDirection: 'row' }}>
             <View style={{ margin: 10 }}>
               <Button
-                title="▲ Upvote (0)"
+                title={`▲ Upvote (${topic.upvote})`}
                 accessibilityLabel="Submit Topic"
                 onPress={this.upvote}
               />
             </View>
             <View style={{ margin: 10 }}>
               <Button
-                title="▼ Downvote (0)"
+                title={`▲ Downvote (${topic.downvote})`}
                 color="orange"
                 accessibilityLabel="Down vote"
                 onPress={this.downvote}
