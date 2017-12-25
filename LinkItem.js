@@ -15,7 +15,15 @@ export default class LinkItem extends React.Component {
     const { value, onPressItem } = this.props;
     return (
       <TouchableOpacity onPress={this._onPressItem}>
-        <View style={{ backgroundColor: '#eee', padding: 20 }}>
+        <View
+          style={{
+            backgroundColor: '#eee',
+            padding: 20,
+            margin: 10,
+            marginTop: 0,
+            borderRadius: 5,
+          }}
+        >
           <Text>{value}</Text>
         </View>
       </TouchableOpacity>

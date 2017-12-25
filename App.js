@@ -8,11 +8,11 @@ import {
   FlatList,
   Alert,
   Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import LinkItem from './LinkItem.js';
 import TopicDatabase from './TopicDatabase.js';
-
-const TOPIC_MAX_LENGTH = 50;
+import NewTopic from './NewTopic.js';
 
 export default class App extends React.Component {
   topics = new TopicDatabase();
@@ -20,7 +20,6 @@ export default class App extends React.Component {
 
   state = {
     topics: [],
-    text: '',
     newTopicModalVisible: false,
   };
 
@@ -36,13 +35,11 @@ export default class App extends React.Component {
 
   onPressItem = item => Alert.alert('Hello ' + item);
 
-  onSubmitTopic = () => {
-    this.topics.add({ value: this.state.text });
-    this.setState({
-      text: '',
-      newTopicModalVisible: false,
-    });
+  onSubmitTopic = value => {
+    this.topics.add({ value });
   };
+
+  closeNewTopicModal = () => this.setState({ newTopicModalVisible: false });
 
   onModalClose = e => {
     console.log(e);
@@ -79,69 +76,11 @@ export default class App extends React.Component {
             keyExtractor={this.keyExtractor}
           />
         </View>
-        <Modal
+        <NewTopic
           visible={this.state.newTopicModalVisible}
-          onRequestClose={this.onModalClose}
-          transparent={true}
-        >
-          <View
-            style={{
-              backgroundColor: '#00000055',
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <View
-              style={{
-                padding: 20,
-                backgroundColor: '#fff',
-                borderRadius: 5,
-                minWidth: '80%',
-              }}
-            >
-              <View style={{ paddingBottom: 20 }}>
-                <Text
-                  style={{ textAlign: 'left', fontSize: 20, marginBottom: 15 }}
-                >
-                  Enter topic:
-                </Text>
-                {/* TODO: how to make it auto scroll to bottom when enter new line? */}
-                <TextInput
-                  style={{
-                    maxHeight: 200,
-                    paddingBottom: 15,
-                    paddingLeft: 5,
-                    paddingRight: 5,
-                  }}
-                  onChangeText={text => this.setState({ text })}
-                  value={this.state.text}
-                  multiline={true}
-                  numberOfLines={2}
-                  placeholder="Enter topic here..."
-                  blurOnSubmit={false}
-                />
-              </View>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  color:
-                    this.state.text.length > TOPIC_MAX_LENGTH ? 'red' : '#888',
-                  marginBottom: 10,
-                }}
-              >
-                {this.state.text.length}/{TOPIC_MAX_LENGTH}
-              </Text>
-              <Button
-                hardwareAccelerated={true}
-                disabled={this.state.text.length > TOPIC_MAX_LENGTH}
-                title="+ Submit"
-                accessibilityLabel="Submit"
-                onPress={this.onSubmitTopic}
-              />
-            </View>
-          </View>
-        </Modal>
+          onClose={this.closeNewTopicModal}
+          onSubmitTopic={this.onSubmitTopic}
+        />
       </View>
     );
   }
