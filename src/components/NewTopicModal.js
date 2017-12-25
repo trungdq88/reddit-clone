@@ -79,6 +79,7 @@ export default class NewTopicModal extends Component {
                     numberOfLines={2}
                     placeholder="Enter topic here..."
                     blurOnSubmit={false}
+                    autoFocus
                   />
                 </View>
                 <Text

@@ -1,17 +1,14 @@
-import { Platform, StatusBar } from 'react-native';
-import { StackNavigator } from 'react-navigation';
-import HomeScreen from './src/screens/HomeScreen.js';
-import TopicScreen from './src/screens/TopicScreen.js';
+import React, { Component } from 'react';
+import { Provider } from 'react-redux';
+import store from './src/store/store.js';
+import Navigator from './src/Navigator.js';
 
-export default StackNavigator(
-  {
-    Home: { screen: HomeScreen },
-    Topic: { screen: TopicScreen },
-  },
-  {
-    cardStyle: {
-      // Fix Android status bar overlap issue
-      paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight,
-    },
-  },
-);
+export default class App extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Navigator {...this.props} />
+      </Provider>
+    );
+  }
+}

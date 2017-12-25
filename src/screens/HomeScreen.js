@@ -1,4 +1,6 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -12,37 +14,25 @@ import {
 } from 'react-native';
 import TopicListItem from '../components/TopicListItem.js';
 import NewTopicModal from '../components/NewTopicModal.js';
-import TopicDatabase from '../utils/TopicDatabase.js';
 import { TOPIC_MAX_LENGTH } from '../utils/constants.js';
+import actions from '../store/actions.js';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Home',
   };
 
-  topics = new TopicDatabase();
   subscription = null;
 
   state = {
-    topics: [],
     newTopicModalVisible: false,
   };
 
-  componentDidMount() {
-    this.subscription = this.topics.subscribe(topics =>
-      this.setState({ topics }),
-    );
-  }
-
-  componentWillUnmount() {
-    this.subscription && this.subscription.dispose();
-  }
-
   onPressItem = item =>
-    this.props.navigation.navigate('Topic', { topic: item });
+    this.props.navigation.navigate('Topic', { topicId: item.id });
 
   onSubmitTopic = content => {
-    this.topics.add(content);
+    this.props.actions.addTopic(content);
   };
 
   closeNewTopicModal = () => this.setState({ newTopicModalVisible: false });
@@ -72,13 +62,13 @@ export default class HomeScreen extends React.Component {
           </View>
         </View>
         <View style={{ flex: 9, width: '100%' }}>
-          {this.state.topics.length === 0 ? (
+          {this.props.topics.length === 0 ? (
             <Text style={{ textAlign: 'center', color: '#888' }}>
               No topics
             </Text>
           ) : (
             <FlatList
-              data={this.state.topics}
+              data={this.props.topics}
               renderItem={this.renderItem}
               keyExtractor={this.keyExtractor}
             />
@@ -104,3 +94,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default connect(
+  state => state,
+  dispatch => ({ actions: bindActionCreators(actions, dispatch) }),
+)(HomeScreen);

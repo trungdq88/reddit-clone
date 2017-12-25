@@ -17,6 +17,11 @@ export default class TopicDatabase {
     this.notify();
   };
 
+  // TODO: Must be someway faster
+  getTopicById = topicId => {
+    return this.topics.find(_ => _.id === topicId);
+  };
+
   notify = () => {
     // TODO: this implementation do not guarantee subscrition order.
     Object.values(this.subscriptions)
