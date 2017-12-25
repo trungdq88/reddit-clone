@@ -1,4 +1,5 @@
 export default class TopicDatabase {
+  _idIterator = 0;
   topics = [];
   subscriptions = {
     // subscriptionId => callback
@@ -16,9 +17,8 @@ export default class TopicDatabase {
       .forEach(callback => callback(this.topics));
   };
 
-  subscribe = callback => {
-    const subscriptionId = Math.random();
-    // TODO: check duplicate subscriptionId.
+  subscribe = (callback, generator) => {
+    const subscriptionId = ++this._idIterator;
     this.subscriptions[subscriptionId] = callback;
     return {
       id: subscriptionId,
