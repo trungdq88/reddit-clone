@@ -18,7 +18,9 @@ describe('TopicDatabase.js', () => {
     const callback = jest.fn();
     const subscription = db.subscribe(callback);
     db.add(123);
-    expect(callback).toBeCalledWith([123]);
+    expect(callback).toBeCalledWith([
+      { id: 1, content: 123, upvote: 0, downvote: 0 },
+    ]);
   });
 
   it('should not trigger callback when disposed', () => {
@@ -33,6 +35,8 @@ describe('TopicDatabase.js', () => {
   it('should add value', () => {
     const db = new TopicDatabase();
     db.add(456);
-    expect(db.topics).toEqual([456]);
+    expect(db.topics).toEqual([
+      { content: 456, id: 1, upvote: 0, downvote: 0 },
+    ]);
   });
 });

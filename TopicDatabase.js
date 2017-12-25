@@ -1,12 +1,15 @@
 export default class TopicDatabase {
-  _idIterator = 0;
+  _subscriptionIdIterator = 0;
+  _topicIdIterator = 0;
   topics = [];
   subscriptions = {
     // subscriptionId => callback
   };
 
-  add = value => {
-    this.topics = [value].concat(this.topics);
+  add = content => {
+    this.topics = [
+      { id: ++this._topicIdIterator, content, upvote: 0, downvote: 0 },
+    ].concat(this.topics);
     this.notify();
   };
 
@@ -18,7 +21,7 @@ export default class TopicDatabase {
   };
 
   subscribe = (callback, generator) => {
-    const subscriptionId = ++this._idIterator;
+    const subscriptionId = ++this._subscriptionIdIterator;
     this.subscriptions[subscriptionId] = callback;
     return {
       id: subscriptionId,

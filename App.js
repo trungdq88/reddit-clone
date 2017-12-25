@@ -10,7 +10,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
-import LinkItem from './LinkItem.js';
+import TopicListItem from './TopicListItem.js';
 import TopicDatabase from './TopicDatabase.js';
 import NewTopic from './NewTopic.js';
 
@@ -33,19 +33,15 @@ export default class App extends React.Component {
     this.subscription && this.subscription.dispose();
   }
 
-  onPressItem = item => Alert.alert('Hello ' + item);
+  onPressItem = item => Alert.alert('Hello ' + item.content);
 
-  onSubmitTopic = value => {
-    this.topics.add({ value });
+  onSubmitTopic = content => {
+    this.topics.add(content);
   };
 
   closeNewTopicModal = () => this.setState({ newTopicModalVisible: false });
 
-  onModalClose = e => {
-    console.log(e);
-  };
-
-  keyExtractor = item => item.value;
+  keyExtractor = item => item.id;
 
   openSubmitModal = () => {
     this.setState({
@@ -54,7 +50,7 @@ export default class App extends React.Component {
   };
 
   renderItem = ({ item }) => (
-    <LinkItem {...item} onPressItem={this.onPressItem} />
+    <TopicListItem topic={item} onPressItem={this.onPressItem} />
   );
 
   render() {
@@ -70,11 +66,17 @@ export default class App extends React.Component {
           </View>
         </View>
         <View style={{ flex: 9, width: '100%' }}>
-          <FlatList
-            data={this.state.topics}
-            renderItem={this.renderItem}
-            keyExtractor={this.keyExtractor}
-          />
+          {this.state.topics.length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#888' }}>
+              No topics
+            </Text>
+          ) : (
+            <FlatList
+              data={this.state.topics}
+              renderItem={this.renderItem}
+              keyExtractor={this.keyExtractor}
+            />
+          )}
         </View>
         <NewTopic
           visible={this.state.newTopicModalVisible}
