@@ -39,4 +39,9 @@ describe('TopicDatabase.js', () => {
       { content: 456, id: 1, upvote: 0, downvote: 0 },
     ]);
   });
+
+  it('should init topics with constructor', () => {
+    const db = new TopicDatabase([1, 2, 3]);
+    expect(db.topics).toEqual([1, 2, 3]);
+  });
 });

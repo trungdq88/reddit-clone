@@ -6,6 +6,10 @@ export default class TopicDatabase {
     // subscriptionId => callback
   };
 
+  constructor(topics) {
+    this.topics = topics || [];
+  }
+
   add = content => {
     this.topics = [
       { id: ++this._topicIdIterator, content, upvote: 0, downvote: 0 },
