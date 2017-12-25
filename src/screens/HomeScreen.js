@@ -10,9 +10,10 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
-import TopicListItem from './TopicListItem.js';
-import TopicDatabase from './TopicDatabase.js';
-import NewTopic from './NewTopic.js';
+import TopicListItem from '../components/TopicListItem.js';
+import NewTopicModal from '../components/NewTopicModal.js';
+import TopicDatabase from '../utils/TopicDatabase.js';
+import { TOPIC_MAX_LENGTH } from '../utils/constants.js';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -83,10 +84,11 @@ export default class HomeScreen extends React.Component {
             />
           )}
         </View>
-        <NewTopic
+        <NewTopicModal
           visible={this.state.newTopicModalVisible}
           onClose={this.closeNewTopicModal}
           onSubmitTopic={this.onSubmitTopic}
+          maxLength={TOPIC_MAX_LENGTH}
         />
       </View>
     );

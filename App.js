@@ -1,7 +1,7 @@
 import { Platform, StatusBar } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import HomeScreen from './HomeScreen.js';
-import TopicScreen from './TopicScreen.js';
+import HomeScreen from './src/screens/HomeScreen.js';
+import TopicScreen from './src/screens/TopicScreen.js';
 
 export default StackNavigator(
   {
@@ -10,6 +10,7 @@ export default StackNavigator(
   },
   {
     cardStyle: {
+      // Fix Android status bar overlap issue
       paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight,
     },
   },

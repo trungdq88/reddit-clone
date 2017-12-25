@@ -1,18 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Button,
-  FlatList,
-  Alert,
-  Modal,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import TopicListItem from './TopicListItem.js';
-import TopicDatabase from './TopicDatabase.js';
-import NewTopic from './NewTopic.js';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default class TopicScreen extends React.Component {
   static navigationOptions = {

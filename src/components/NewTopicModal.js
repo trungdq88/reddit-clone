@@ -8,13 +8,13 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import T from 'prop-types';
-import { TOPIC_MAX_LENGTH } from './constants.js';
 
-export default class NewTopic extends Component {
+export default class NewTopicModal extends Component {
   static propTypes = {
     visible: T.bool,
     onClose: T.func,
     onSubmitTopic: T.func,
+    maxLength: T.number,
   };
 
   state = {
@@ -85,19 +85,19 @@ export default class NewTopic extends Component {
                   style={{
                     textAlign: 'right',
                     color:
-                      this.state.text.length > TOPIC_MAX_LENGTH
+                      this.state.text.length > this.props.maxLength
                         ? 'red'
                         : '#888',
                     marginBottom: 10,
                   }}
                 >
-                  {this.state.text.length}/{TOPIC_MAX_LENGTH}
+                  {this.state.text.length}/{this.props.maxLength}
                 </Text>
                 <Button
                   hardwareAccelerated={true}
                   disabled={
                     this.state.text.length === 0 ||
-                    this.state.text.length > TOPIC_MAX_LENGTH
+                    this.state.text.length > this.props.maxLength
                   }
                   title="+ Submit"
                   accessibilityLabel="Submit"
