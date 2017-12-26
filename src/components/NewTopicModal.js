@@ -6,6 +6,7 @@ import {
   Button,
   Modal,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from 'react-native';
 import T from 'prop-types';
 
@@ -36,6 +37,13 @@ export default class NewTopicModal extends Component {
         onRequestClose={this.props.onClose}
         transparent={true}
         animationType="fade"
+        supportedOrientations={[
+          'portrait',
+          'portrait-upside-down',
+          'landscape',
+          'landscape-left',
+          'landscape-right',
+        ]}
       >
         <TouchableWithoutFeedback onPress={this.props.onClose}>
           <View
@@ -46,66 +54,67 @@ export default class NewTopicModal extends Component {
               alignItems: 'center',
             }}
           >
-            <TouchableWithoutFeedback onPress={() => {}}>
-              <View
-                style={{
-                  padding: 20,
-                  backgroundColor: '#fff',
-                  borderRadius: 5,
-                  minWidth: '80%',
-                }}
-              >
-                <View style={{ paddingBottom: 20 }}>
-                  <Text
-                    style={{
-                      textAlign: 'left',
-                      fontSize: 20,
-                      marginBottom: 15,
-                    }}
-                  >
-                    Enter topic:
-                  </Text>
-                  {/* TODO: how to make it auto scroll to bottom when enter new line? */}
-                  <TextInput
-                    style={{
-                      maxHeight: 200,
-                      paddingBottom: 15,
-                      paddingLeft: 5,
-                      paddingRight: 5,
-                    }}
-                    onChangeText={text => this.setState({ text })}
-                    value={this.state.text}
-                    multiline={true}
-                    numberOfLines={2}
-                    placeholder="Enter topic here..."
-                    blurOnSubmit={false}
-                    autoFocus
-                  />
-                </View>
-                <Text
+            <KeyboardAvoidingView behavior="padding">
+              <TouchableWithoutFeedback onPress={() => {}}>
+                <View
                   style={{
-                    textAlign: 'right',
-                    color:
-                      this.state.text.length > this.props.maxLength
-                        ? 'red'
-                        : '#888',
-                    marginBottom: 10,
+                    padding: 20,
+                    backgroundColor: '#fff',
+                    borderRadius: 5,
+                    minWidth: '80%',
+                    marginBottom: 50,
                   }}
                 >
-                  {this.state.text.length}/{this.props.maxLength}
-                </Text>
-                <Button
-                  hardwareAccelerated={true}
-                  disabled={
-                    this.state.text.length === 0 ||
-                    this.state.text.length > this.props.maxLength
-                  }
-                  title="+ Submit"
-                  accessibilityLabel="Submit"
-                  onPress={this.onSubmitTopic}
-                />
-              </View>
-            </TouchableWithoutFeedback>
+                  <View style={{ paddingBottom: 20 }}>
+                    <Text
+                      style={{
+                        textAlign: 'left',
+                        fontSize: 20,
+                        marginBottom: 15,
+                      }}
+                    >
+                      Enter topic:
+                    </Text>
+                    {/* TODO: how to make it auto scroll to bottom when enter new line? */}
+                    <TextInput
+                      style={{
+                        maxHeight: 200,
+                        paddingBottom: 15,
+                        paddingLeft: 5,
+                        paddingRight: 5,
+                      }}
+                      onChangeText={text => this.setState({ text })}
+                      value={this.state.text}
+                      placeholder="Enter topic here..."
+                      onSubmitEditing={this.onSubmitTopic}
+                      autoFocus
+                    />
+                  </View>
+                  <Text
+                    style={{
+                      textAlign: 'right',
+                      color:
+                        this.state.text.length > this.props.maxLength
+                          ? 'red'
+                          : '#888',
+                      marginBottom: 10,
+                    }}
+                  >
+                    {this.state.text.length}/{this.props.maxLength}
+                  </Text>
+                  <Button
+                    hardwareAccelerated={true}
+                    disabled={
+                      this.state.text.length === 0 ||
+                      this.state.text.length > this.props.maxLength
+                    }
+                    title="+ Submit"
+                    accessibilityLabel="Submit"
+                    onPress={this.onSubmitTopic}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
