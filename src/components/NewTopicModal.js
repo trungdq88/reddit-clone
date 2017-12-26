@@ -7,6 +7,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import T from 'prop-types';
 
@@ -23,6 +24,10 @@ export default class NewTopicModal extends Component {
   };
 
   onSubmitTopic = () => {
+    if (!this.state.text) {
+      this.props.onClose && this.props.onClose();
+      return;
+    }
     if (this.props.onSubmitTopic) {
       this.props.onSubmitTopic(this.state.text);
       this.setState({ text: '' });
@@ -62,7 +67,7 @@ export default class NewTopicModal extends Component {
                     backgroundColor: '#fff',
                     borderRadius: 5,
                     minWidth: '80%',
-                    marginBottom: 50,
+                    marginBottom: Platform.OS === 'ios' ? 40 : undefined,
                   }}
                 >
                   <View style={{ paddingBottom: 20 }}>
