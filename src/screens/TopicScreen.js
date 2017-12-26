@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import actions from '../store/actions.js';
+import topicDatabase from '../store/store.js';
 
-class TopicScreen extends React.Component {
+export default class TopicScreen extends React.Component {
   static navigationOptions = {
     title: 'Topic',
   };
@@ -12,28 +10,34 @@ class TopicScreen extends React.Component {
   constructor(...args) {
     super(...args);
     this.topicId = this.props.navigation.state.params.topicId;
+    this.state = {
+      topic: null,
+    };
   }
 
   componentDidMount() {
-    this.props.actions.getTopicDetail(this.topicId);
+    this.subscription = topicDatabase.subscribeTopic(
+      this.topicId,
+      this.onTopicDetail,
+    );
   }
 
   componentWillUnmount() {
-    this.props.actions.cleanUpTopicDetail(this.topicId);
+    this.subscription && this.subscription.dispose();
   }
 
+  onTopicDetail = topic => this.setState({ topic });
+
   upvote = () => {
-    this.props.actions.upvote(this.topicId);
-    this.props.actions.getTopicDetail(this.topicId);
+    topicDatabase.upvote(this.topicId);
   };
 
   downvote = () => {
-    this.props.actions.downvote(this.topicId);
-    this.props.actions.getTopicDetail(this.topicId);
+    topicDatabase.downvote(this.topicId);
   };
 
   render() {
-    const topic = this.props.topicDetail[this.topicId];
+    const topic = this.state.topic;
 
     if (!topic) return null; // or loading
 
@@ -83,8 +87,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-export default connect(
-  state => state,
-  dispatch => ({ actions: bindActionCreators(actions, dispatch) }),
-)(TopicScreen);

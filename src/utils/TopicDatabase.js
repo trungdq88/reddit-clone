@@ -82,6 +82,8 @@ export default class TopicDatabase {
     this.topics.sort((a, b) => {
       return a.upvote - a.downvote < b.upvote - b.downvote ? 1 : -1;
     });
+    // force create new object
+    this.topics = this.topics.concat([]);
   };
 
   notifyTopic = topicId => {

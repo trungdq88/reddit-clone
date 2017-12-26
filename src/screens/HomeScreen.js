@@ -1,6 +1,4 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -15,9 +13,9 @@ import {
 import TopicListItem from '../components/TopicListItem.js';
 import NewTopicModal from '../components/NewTopicModal.js';
 import { TOPIC_MAX_LENGTH } from '../utils/constants.js';
-import actions from '../store/actions.js';
+import topicDatabase from '../store/store.js';
 
-class HomeScreen extends React.Component {
+export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Home',
   };
@@ -26,15 +24,25 @@ class HomeScreen extends React.Component {
 
   state = {
     newTopicModalVisible: false,
+    topics: [],
   };
 
-  onPressItem = item =>
+  componentDidMount() {
+    this.subscription = topicDatabase.subscribeLatestTopic(this.onLatestTopic);
+  }
+
+  componentWillUnmount() {
+    this.subscription && this.subscription.dispose();
+  }
+
+  onLatestTopic = topics => {
+    this.setState({ topics });
+  };
+
+  onPressItem = item => {
     // TODO: Fast clicks trigger multiple navigation
     // https://github.com/react-community/react-navigation/issues/271
     this.props.navigation.navigate('Topic', { topicId: item.id, key: item.id });
-
-  onSubmitTopic = content => {
-    this.props.actions.addTopic(content);
   };
 
   closeNewTopicModal = () => this.setState({ newTopicModalVisible: false });
@@ -64,13 +72,13 @@ class HomeScreen extends React.Component {
           </View>
         </View>
         <View style={{ flex: 9, width: '100%' }}>
-          {this.props.topics.length === 0 ? (
+          {this.state.topics.length === 0 ? (
             <Text style={{ textAlign: 'center', color: '#888' }}>
               No topics
             </Text>
           ) : (
             <FlatList
-              data={this.props.topics}
+              data={this.state.topics}
               renderItem={this.renderItem}
               keyExtractor={this.keyExtractor}
             />
@@ -79,7 +87,7 @@ class HomeScreen extends React.Component {
         <NewTopicModal
           visible={this.state.newTopicModalVisible}
           onClose={this.closeNewTopicModal}
-          onSubmitTopic={this.onSubmitTopic}
+          onSubmitTopic={topicDatabase.add}
           maxLength={TOPIC_MAX_LENGTH}
         />
       </View>
@@ -96,8 +104,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-export default connect(
-  state => state,
-  dispatch => ({ actions: bindActionCreators(actions, dispatch) }),
-)(HomeScreen);
