@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import topicDatabase from '../store/store.js';
+import topicDatabase from '../store/database.js';
 
 export default class TopicScreen extends React.Component {
   static navigationOptions = {

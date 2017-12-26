@@ -13,7 +13,7 @@ import {
 import TopicListItem from '../components/TopicListItem.js';
 import NewTopicModal from '../components/NewTopicModal.js';
 import { TOPIC_MAX_LENGTH } from '../utils/constants.js';
-import topicDatabase from '../store/store.js';
+import topicDatabase from '../store/database.js';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
