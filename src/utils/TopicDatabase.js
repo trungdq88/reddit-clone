@@ -5,16 +5,51 @@ export default class TopicDatabase {
   subscriptions = {
     // subscriptionId => callback
   };
+  topicSubscriptions = {
+    // topicId => [subscriptionId,...]
+  };
+  latestTopicSubscriptions = [
+    /* subscriptionId */
+  ];
 
   constructor(topics) {
     this.topics = topics || [];
   }
 
+  subscribeTopic = (topicId, callback) => {
+    const subscriptionId = ++this._subscriptionIdIterator;
+    this.subscriptions[subscriptionId] = callback;
+
+    // init empty array if not exist
+    this.topicSubscriptions[topicId] = (
+      this.topicSubscriptions[topicId] || []
+    ).concat(subscriptionId);
+
+    // trigger callback first time
+    callback(this.topics.find(t => t.id === topicId));
+
+    // return subscription object
+    return {
+      id: subscriptionId,
+      dispose: () => {
+        this.subscriptions[subscriptionId] = null;
+        this.topicSubscriptions[topicId] = (
+          this.topicSubscriptions[topicId] || []
+        ).filter(subId => subId !== subscriptionId);
+      },
+    };
+  };
+
   add = content => {
-    this.topics = [
-      { id: ++this._topicIdIterator, content, upvote: 0, downvote: 0 },
-    ].concat(this.topics);
-    this.notify();
+    const topic = {
+      id: ++this._topicIdIterator,
+      content,
+      upvote: 0,
+      downvote: 0,
+    };
+    this.topics = [topic].concat(this.topics);
+    this.notifyLatestTopics();
+    return topic;
   };
 
   // TODO: Must be someway faster
@@ -24,14 +59,22 @@ export default class TopicDatabase {
 
   upvote = topicId => {
     const topicIndex = this.topics.findIndex(_ => _.id === topicId);
-    this.topics[topicIndex].upvote += 1;
-    this.notify();
+    this.topics[topicIndex] = {
+      ...this.topics[topicIndex],
+      upvote: this.topics[topicIndex].upvote + 1,
+    };
+    this.notifyLatestTopics();
+    this.notifyTopic(topicId);
   };
 
   downvote = topicId => {
     const topicIndex = this.topics.findIndex(_ => _.id === topicId);
-    this.topics[topicIndex].downvote += 1;
-    this.notify();
+    this.topics[topicIndex] = {
+      ...this.topics[topicIndex],
+      downvote: this.topics[topicIndex].downvote + 1,
+    };
+    this.notifyLatestTopics();
+    this.notifyTopic(topicId);
   };
 
   // TODO: need better data structure
@@ -41,20 +84,34 @@ export default class TopicDatabase {
     });
   };
 
-  notify = () => {
+  notifyTopic = topicId => {
+    (this.topicSubscriptions[topicId] || [])
+      .map(subId => this.subscriptions[subId])
+      .forEach(callback => callback(this.topics.find(t => t.id === topicId)));
+  };
+
+  notifyLatestTopics = () => {
     this.sort();
-    // TODO: this implementation do not guarantee subscrition order.
-    Object.values(this.subscriptions)
-      .filter(callback => callback !== null)
+    this.latestTopicSubscriptions
+      .map(subId => this.subscriptions[subId])
       .forEach(callback => callback(this.topics));
   };
 
-  subscribe = (callback, generator) => {
+  subscribeLatestTopic = callback => {
     const subscriptionId = ++this._subscriptionIdIterator;
     this.subscriptions[subscriptionId] = callback;
+    this.latestTopicSubscriptions = this.latestTopicSubscriptions.concat(
+      subscriptionId,
+    );
+    callback(this.topics);
     return {
       id: subscriptionId,
-      dispose: () => (this.subscriptions[subscriptionId] = null),
+      dispose: () => {
+        this.subscriptions[subscriptionId] = null;
+        this.latestTopicSubscriptions = this.latestTopicSubscriptions.filter(
+          subId => subId !== subscriptionId,
+        );
+      },
     };
   };
 }
