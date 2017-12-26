@@ -140,4 +140,25 @@ describe('TopicDatabase.js', () => {
     expect(callback.mock.calls[2][0].map(_ => _.upvote)[0]).toEqual(101);
     expect(callback.mock.calls[3][0].map(_ => _.upvote)[0]).toEqual(102);
   });
+
+  it('should sort by upvote-downvote desc, then by id desc', () => {
+    const db = new TopicDatabase();
+    for (let i = 0; i < 10; i++) {
+      db.add(i + 1);
+    }
+    const callback = jest.fn();
+    db.subscribeLatestTopic(callback);
+    expect(callback.mock.calls[0][0].map(_ => _.id)).toEqual([
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+    ]);
+  });
 });
