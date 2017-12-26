@@ -36,7 +36,7 @@ describe('TopicDatabase.js', () => {
   it('should add value', () => {
     const db = new TopicDatabase();
     db.add(456);
-    expect(db.topics).toEqual([
+    expect(db.getLatestTopics()).toEqual([
       { content: 456, id: 1, upvote: 0, downvote: 0 },
     ]);
   });

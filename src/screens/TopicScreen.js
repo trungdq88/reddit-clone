@@ -7,6 +7,8 @@ export default class TopicScreen extends React.Component {
     title: 'Topic',
   };
 
+  subscription = null;
+
   constructor(...args) {
     super(...args);
     this.topicId = this.props.navigation.state.params.topicId;

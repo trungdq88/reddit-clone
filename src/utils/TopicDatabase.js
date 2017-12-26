@@ -2,7 +2,12 @@ export default class TopicDatabase {
   _subscriptionIdIterator = 0;
   _topicIdIterator = 0;
   maxRecentCount = 20;
-  topics = [];
+  topics = [
+    /* topicId */
+  ];
+  topicsMap = {
+    // topicId => topic object
+  };
   subscriptions = {
     // subscriptionId => callback
   };
@@ -25,26 +30,25 @@ export default class TopicDatabase {
       upvote: 0,
       downvote: 0,
     };
-    this.topics.push(topic);
+    this.topicsMap[topic.id] = topic;
+    this.topics = [topic.id].concat(this.topics);
     this.notifyLatestTopics();
     return topic;
   };
 
   upvote = topicId => {
-    const topicIndex = this.topics.findIndex(_ => _.id === topicId);
-    this.topics[topicIndex] = {
-      ...this.topics[topicIndex],
-      upvote: this.topics[topicIndex].upvote + 1,
+    this.topicsMap[topicId] = {
+      ...this.topicsMap[topicId],
+      upvote: this.topicsMap[topicId].upvote + 1,
     };
     this.notifyLatestTopics();
     this.notifyTopic(topicId);
   };
 
   downvote = topicId => {
-    const topicIndex = this.topics.findIndex(_ => _.id === topicId);
-    this.topics[topicIndex] = {
-      ...this.topics[topicIndex],
-      downvote: this.topics[topicIndex].downvote + 1,
+    this.topicsMap[topicId] = {
+      ...this.topicsMap[topicId],
+      downvote: this.topicsMap[topicId].downvote + 1,
     };
     this.notifyLatestTopics();
     this.notifyTopic(topicId);
@@ -52,24 +56,30 @@ export default class TopicDatabase {
 
   sort = () => {
     this.topics.sort((a, b) => {
-      if (a.upvote - a.downvote < b.upvote - b.downvote) {
+      const x = this.topicsMap[a];
+      const y = this.topicsMap[b];
+      if (x.upvote - x.downvote < y.upvote - y.downvote) {
         return 1;
       }
-      if (a.upvote - a.downvote > b.upvote - b.downvote) {
+      if (x.upvote - x.downvote > y.upvote - y.downvote) {
         return -1;
       }
-      return b.id - a.id;
+      return y.id - x.id;
     });
     // force create new object
     this.topics = this.topics.concat([]);
   };
 
-  getLatestTopics = () => this.topics.slice(0, this.maxRecentCount);
+  getLatestTopics = () => {
+    return this.topics
+      .slice(0, this.maxRecentCount)
+      .map(topicId => this.topicsMap[topicId]);
+  };
 
   notifyTopic = topicId => {
     (this.topicSubscriptions[topicId] || [])
       .map(subId => this.subscriptions[subId])
-      .forEach(callback => callback(this.topics.find(t => t.id === topicId)));
+      .forEach(callback => callback(this.topicsMap[topicId]));
   };
 
   notifyLatestTopics = () => {
@@ -107,7 +117,7 @@ export default class TopicDatabase {
     ).concat(subscriptionId);
 
     // trigger callback first time
-    callback(this.topics.find(t => t.id === topicId));
+    callback(this.topicsMap[topicId]);
 
     // return subscription object
     return {
