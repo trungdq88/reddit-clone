@@ -89,4 +89,55 @@ describe('TopicDatabase.js', () => {
       [{ id: 1, content: 456, upvote: 1, downvote: 2 }],
     ]);
   });
+
+  it('should return new object for each subscription trigger', () => {
+    const db = new TopicDatabase();
+    const topic = db.add(456);
+    const callback = jest.fn();
+    db.subscribeLatestTopic(callback);
+    db.upvote(topic.id);
+    expect(callback.mock.calls[0][0] === callback.mock.calls[1][0]).toBe(false);
+  });
+
+  it('should always return top 20 topics', () => {
+    const db = new TopicDatabase();
+    for (let i = 0; i < 100; i++) {
+      db.add(i + 1);
+      for (let j = 0; j < i; j++) {
+        db.upvote(i + 1);
+      }
+    }
+    const callback = jest.fn();
+    db.subscribeLatestTopic(callback);
+    expect(callback.mock.calls[0][0].length).toEqual(20);
+    expect(callback.mock.calls[0][0].map(_ => _.upvote)).toEqual([
+      99,
+      98,
+      97,
+      96,
+      95,
+      94,
+      93,
+      92,
+      91,
+      90,
+      89,
+      88,
+      87,
+      86,
+      85,
+      84,
+      83,
+      82,
+      81,
+      80,
+    ]);
+    // Upvote topic id 100 three more times
+    db.upvote(100);
+    db.upvote(100);
+    db.upvote(100);
+    expect(callback.mock.calls[1][0].map(_ => _.upvote)[0]).toEqual(100);
+    expect(callback.mock.calls[2][0].map(_ => _.upvote)[0]).toEqual(101);
+    expect(callback.mock.calls[3][0].map(_ => _.upvote)[0]).toEqual(102);
+  });
 });

@@ -1,6 +1,7 @@
 export default class TopicDatabase {
   _subscriptionIdIterator = 0;
   _topicIdIterator = 0;
+  maxRecentCount = 20;
   topics = [];
   subscriptions = {
     // subscriptionId => callback
@@ -12,33 +13,10 @@ export default class TopicDatabase {
     /* subscriptionId */
   ];
 
-  constructor(topics) {
+  constructor(topics, maxRecentCount) {
     this.topics = topics || [];
+    this.maxRecentCount = maxRecentCount || 20;
   }
-
-  subscribeTopic = (topicId, callback) => {
-    const subscriptionId = ++this._subscriptionIdIterator;
-    this.subscriptions[subscriptionId] = callback;
-
-    // init empty array if not exist
-    this.topicSubscriptions[topicId] = (
-      this.topicSubscriptions[topicId] || []
-    ).concat(subscriptionId);
-
-    // trigger callback first time
-    callback(this.topics.find(t => t.id === topicId));
-
-    // return subscription object
-    return {
-      id: subscriptionId,
-      dispose: () => {
-        this.subscriptions[subscriptionId] = null;
-        this.topicSubscriptions[topicId] = (
-          this.topicSubscriptions[topicId] || []
-        ).filter(subId => subId !== subscriptionId);
-      },
-    };
-  };
 
   add = content => {
     const topic = {
@@ -50,11 +28,6 @@ export default class TopicDatabase {
     this.topics = [topic].concat(this.topics);
     this.notifyLatestTopics();
     return topic;
-  };
-
-  // TODO: Must be someway faster
-  getTopicById = topicId => {
-    return this.topics.find(_ => _.id === topicId);
   };
 
   upvote = topicId => {
@@ -77,7 +50,6 @@ export default class TopicDatabase {
     this.notifyTopic(topicId);
   };
 
-  // TODO: need better data structure
   sort = () => {
     this.topics.sort((a, b) => {
       return a.upvote - a.downvote < b.upvote - b.downvote ? 1 : -1;
@@ -85,6 +57,8 @@ export default class TopicDatabase {
     // force create new object
     this.topics = this.topics.concat([]);
   };
+
+  getLatestTopics = () => this.topics.slice(0, this.maxRecentCount);
 
   notifyTopic = topicId => {
     (this.topicSubscriptions[topicId] || [])
@@ -96,7 +70,7 @@ export default class TopicDatabase {
     this.sort();
     this.latestTopicSubscriptions
       .map(subId => this.subscriptions[subId])
-      .forEach(callback => callback(this.topics));
+      .forEach(callback => callback(this.getLatestTopics()));
   };
 
   subscribeLatestTopic = callback => {
@@ -105,7 +79,7 @@ export default class TopicDatabase {
     this.latestTopicSubscriptions = this.latestTopicSubscriptions.concat(
       subscriptionId,
     );
-    callback(this.topics);
+    callback(this.getLatestTopics());
     return {
       id: subscriptionId,
       dispose: () => {
@@ -113,6 +87,30 @@ export default class TopicDatabase {
         this.latestTopicSubscriptions = this.latestTopicSubscriptions.filter(
           subId => subId !== subscriptionId,
         );
+      },
+    };
+  };
+
+  subscribeTopic = (topicId, callback) => {
+    const subscriptionId = ++this._subscriptionIdIterator;
+    this.subscriptions[subscriptionId] = callback;
+
+    // init empty array if not exist
+    this.topicSubscriptions[topicId] = (
+      this.topicSubscriptions[topicId] || []
+    ).concat(subscriptionId);
+
+    // trigger callback first time
+    callback(this.topics.find(t => t.id === topicId));
+
+    // return subscription object
+    return {
+      id: subscriptionId,
+      dispose: () => {
+        this.subscriptions[subscriptionId] = null;
+        this.topicSubscriptions[topicId] = (
+          this.topicSubscriptions[topicId] || []
+        ).filter(subId => subId !== subscriptionId);
       },
     };
   };
