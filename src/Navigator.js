@@ -1,4 +1,5 @@
-import { Platform, StatusBar } from 'react-native';
+import React from 'react';
+import { Platform, StatusBar, Text } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import HomeScreen from './screens/HomeScreen.js';
 import TopicScreen from './screens/TopicScreen.js';

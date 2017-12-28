@@ -54,18 +54,38 @@ export default class TopicScreen extends React.Component {
           <Text>{topic.content}</Text>
         </View>
 
-        <View style={{ flex: 3 }}>
+        <View style={{ flex: 5 }}>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ margin: 10 }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 40,
+                  marginBottom: 20,
+                  color: '#0052cc',
+                }}
+              >
+                {topic.upvote}
+              </Text>
               <Button
-                title={`▲ Upvote (${topic.upvote})`}
+                title={`▲ Upvote`}
                 accessibilityLabel="Submit Topic"
                 onPress={this.upvote}
               />
             </View>
             <View style={{ margin: 10 }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 40,
+                  marginBottom: 20,
+                  color: 'orange',
+                }}
+              >
+                {topic.downvote}
+              </Text>
               <Button
-                title={`▼ Downvote (${topic.downvote})`}
+                title={`▼ Downvote`}
                 color="orange"
                 accessibilityLabel="Down vote"
                 onPress={this.downvote}

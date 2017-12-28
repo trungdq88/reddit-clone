@@ -15,9 +15,22 @@ import NewTopicModal from '../components/NewTopicModal.js';
 import { TOPIC_MAX_LENGTH } from '../utils/constants.js';
 import topicDatabase from '../store/database.js';
 
+const add100000Topics = () => {
+  for (let i = 0; i < 50000; i++) {
+    topicDatabase.topics.push({
+      id: topicDatabase.topics.length,
+      content: 'topic ' + topicDatabase.topics.length,
+      upvote: 0,
+      downvote: 0,
+    });
+  }
+  topicDatabase.add('hello');
+};
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Home',
+    headerRight: <Button title="Add 50,000 Topic" onPress={add100000Topics} />,
   };
 
   subscription = null;
@@ -29,9 +42,6 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this.subscription = topicDatabase.subscribeLatestTopic(this.onLatestTopic);
-    for (let i = 0; i < 10000; i++) {
-      topicDatabase.add('topic ' + i);
-    }
   }
 
   componentWillUnmount() {
