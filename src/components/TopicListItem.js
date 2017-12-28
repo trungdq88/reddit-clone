@@ -14,7 +14,7 @@ export default class TopicListItem extends React.Component {
   render() {
     const { topic, onPressItem } = this.props;
     return (
-      <TouchableOpacity onPress={this.onPressItem}>
+      <TouchableOpacity onPress={this.onPressItem} testID="topic-item">
         <View
           style={{
             backgroundColor: '#eee',
