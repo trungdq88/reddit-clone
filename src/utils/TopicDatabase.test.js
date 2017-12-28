@@ -100,7 +100,7 @@ describe('TopicDatabase.js', () => {
   });
 
   it('should always return top 20 topics', () => {
-    const db = new TopicDatabase();
+    const db = new TopicDatabase([], 20);
     for (let i = 0; i < 100; i++) {
       db.add(i + 1);
       for (let j = 0; j < i; j++) {
