@@ -80,7 +80,6 @@ export default class NewTopicModal extends Component {
                     >
                       Enter topic:
                     </Text>
-                    {/* TODO: how to make it auto scroll to bottom when enter new line? */}
                     <TextInput
                       style={{
                         maxHeight: 200,

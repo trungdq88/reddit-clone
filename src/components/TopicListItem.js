@@ -8,13 +8,13 @@ export default class TopicListItem extends React.Component {
     onPressItem: T.func,
   };
 
-  _onPressItem = () =>
+  onPressItem = () =>
     this.props.onPressItem && this.props.onPressItem(this.props.topic);
 
   render() {
     const { topic, onPressItem } = this.props;
     return (
-      <TouchableOpacity onPress={this._onPressItem}>
+      <TouchableOpacity onPress={this.onPressItem}>
         <View
           style={{
             backgroundColor: '#eee',

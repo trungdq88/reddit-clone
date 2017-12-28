@@ -55,7 +55,7 @@ export default class HomeScreen extends React.Component {
   onPressItem = item => {
     // TODO: Fast clicks trigger multiple navigation (on Android only)
     // https://github.com/react-community/react-navigation/issues/271
-    this.props.navigation.navigate('Topic', { topicId: item.id, key: item.id });
+    this.props.navigation.navigate('Topic', { topicId: item.id });
   };
 
   closeNewTopicModal = () => this.setState({ newTopicModalVisible: false });
