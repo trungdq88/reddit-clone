@@ -58,4 +58,35 @@ describe('max-queue.js', () => {
     input.forEach(() => output.push(queue.removeMax()));
     expect(output).toEqual([8, 7, 6, 5, 4, 4, 3]);
   });
+
+  it('should get first 4 items and keep original queue', () => {
+    const queue = new MaxQueue([8, 5, 7, 4, 3, 6, 4]);
+    const output = [];
+    for (let i = 0; i < 4; i++) {
+      output.push(queue.removeMax());
+    }
+    output.forEach(item => queue.insert(item));
+    expect(output).toEqual([8, 7, 6, 5]);
+    expect(queue.tree.length).toEqual(7);
+
+    const output2 = [];
+    for (let i = 0; i < 4; i++) {
+      output2.push(queue.removeMax());
+    }
+    output2.forEach(item => queue.insert(item));
+    expect(output2).toEqual([8, 7, 6, 5]);
+  });
+
+  it('should get first 10 items and keep original queue', () => {
+    const queue = new MaxQueue([8, 5, 7, 4, 3, 6, 4]);
+    const output = [];
+    for (let i = 0; i < 10; i++) {
+      const max = queue.removeMax();
+      if (max === undefined) return;
+      output.push(max);
+    }
+    output.forEach(item => queue.insert(item));
+    expect(output).toEqual([8, 7, 6, 5, 4, 4, 3]);
+    expect(queue.tree.length).toEqual(7);
+  });
 });

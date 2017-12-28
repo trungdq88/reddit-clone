@@ -4,15 +4,18 @@ export default class MaxQueue {
     this.comparator = comparator;
   }
 
+  // O(1)
   getMax() {
-    return tree[0];
+    return this.tree[0];
   }
 
+  // O(log(n))
   insert(value) {
     this.tree.push(value);
     this.bubble(this.tree.length - 1);
   }
 
+  // O(log(n))
   removeMax() {
     const max = this.tree[0];
     // Move the last node to root

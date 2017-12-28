@@ -1,10 +1,10 @@
+import MaxQueue from './MaxQueue.js';
+
 export default class TopicDatabase {
   _subscriptionIdIterator = 0;
   _topicIdIterator = 0;
   maxRecentCount = 20;
-  topics = [
-    /* topicId */
-  ];
+  topics = null;
   topicsMap = {
     // topicId => topic object
   };
@@ -19,10 +19,24 @@ export default class TopicDatabase {
   ];
 
   constructor(topics, maxRecentCount) {
-    this.topics = topics || [];
+    this.topics = topics || new MaxQueue([], this.comparator);
     this.maxRecentCount = maxRecentCount || 20;
   }
 
+  comparator = (x, y) => {
+    const a = this.topicsMap[x];
+    const b = this.topicsMap[y];
+    if (a === undefined || b === undefined) return 1;
+    if (a.upvote - a.downvote < b.upvote - b.downvote) {
+      return 1;
+    }
+    if (a.upvote - a.downvote > b.upvote - b.downvote) {
+      return -1;
+    }
+    return b.id - a.id;
+  };
+
+  // O(log(n))
   add = content => {
     const topic = {
       id: ++this._topicIdIterator,
@@ -30,8 +44,9 @@ export default class TopicDatabase {
       upvote: 0,
       downvote: 0,
     };
+
     this.topicsMap[topic.id] = topic;
-    this.topics = [topic.id].concat(this.topics);
+    this.topics.insert(topic.id);
     this.notifyLatestTopics();
     return topic;
   };
@@ -41,6 +56,7 @@ export default class TopicDatabase {
       ...this.topicsMap[topicId],
       upvote: this.topicsMap[topicId].upvote + 1,
     };
+    this.reindexQueue();
     this.notifyLatestTopics();
     this.notifyTopic(topicId);
   };
@@ -50,43 +66,49 @@ export default class TopicDatabase {
       ...this.topicsMap[topicId],
       downvote: this.topicsMap[topicId].downvote + 1,
     };
+    this.reindexQueue();
     this.notifyLatestTopics();
     this.notifyTopic(topicId);
   };
 
-  sort = () => {
-    this.topics.sort((a, b) => {
-      const x = this.topicsMap[a];
-      const y = this.topicsMap[b];
-      if (x.upvote - x.downvote < y.upvote - y.downvote) {
-        return 1;
-      }
-      if (x.upvote - x.downvote > y.upvote - y.downvote) {
-        return -1;
-      }
-      return y.id - x.id;
-    });
-    // force create new object
-    this.topics = this.topics.concat([]);
+  // O(n*log(n))
+  reindexQueue = () => {
+    const tmp = [];
+    console.log(this.topics.tree);
+    while (this.topics.getMax() !== undefined) {
+      tmp.push(this.topics.removeMax());
+    }
+    console.log('tmp', tmp);
+    tmp.forEach(item => this.topics.insert(item));
+    console.log(this.topics.tree);
   };
 
+  // O(maxRecentCount*log(n))
   getLatestTopics = () => {
-    return this.topics
-      .slice(0, this.maxRecentCount)
-      .map(topicId => this.topicsMap[topicId]);
+    const output = [];
+    for (let i = 0; i < this.maxRecentCount; i++) {
+      const max = this.topics.removeMax();
+      if (max === undefined) break;
+      output.push(max);
+    }
+    output.forEach(item => this.topics.insert(item));
+    const result = output.map(topicId => this.topicsMap[topicId]);
+    return result;
   };
 
+  // O(S)
   notifyTopic = topicId => {
     (this.topicSubscriptions[topicId] || [])
       .map(subId => this.subscriptions[subId])
       .forEach(callback => callback(this.topicsMap[topicId]));
   };
 
+  // O(log(n) + S)
   notifyLatestTopics = () => {
-    this.sort();
+    const topics = this.getLatestTopics();
     this.latestTopicSubscriptions
       .map(subId => this.subscriptions[subId])
-      .forEach(callback => callback(this.getLatestTopics()));
+      .forEach(callback => callback(topics));
   };
 
   subscribeLatestTopic = callback => {

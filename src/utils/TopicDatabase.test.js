@@ -1,8 +1,9 @@
 import TopicDatabase from './TopicDatabase.js';
+import MaxQueue from './MaxQueue.js';
 
 describe('TopicDatabase.js', () => {
-  it('should init with empty list', () => {
-    expect(new TopicDatabase().topics).toEqual([]);
+  it('should init with MaxQueue', () => {
+    expect(new TopicDatabase().topics instanceof MaxQueue).toBe(true);
   });
 
   it('should receive subscription with subscription id when subscribe', () => {
@@ -160,5 +161,19 @@ describe('TopicDatabase.js', () => {
       2,
       1,
     ]);
+  });
+
+  it.only('should always return top 4 topics', () => {
+    const db = new TopicDatabase(undefined, 4);
+    for (let i = 0; i < 10; i++) {
+      db.add(i + 1);
+      for (let j = 0; j < i; j++) {
+        db.upvote(i + 1);
+      }
+    }
+    const callback = jest.fn();
+    db.subscribeLatestTopic(callback);
+    expect(callback.mock.calls[0][0].length).toEqual(4);
+    expect(callback.mock.calls[0][0].map(_ => _.upvote)).toEqual([10, 9, 8, 7]);
   });
 });
