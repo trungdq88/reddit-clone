@@ -92,6 +92,7 @@ export default class NewTopicModal extends Component {
                       placeholder="Enter topic here..."
                       onSubmitEditing={this.onSubmitTopic}
                       autoFocus
+                      testID="topic-content-input"
                     />
                   </View>
                   <Text
@@ -107,7 +108,6 @@ export default class NewTopicModal extends Component {
                     {this.state.text.length}/{this.props.maxLength}
                   </Text>
                   <Button
-                    hardwareAccelerated={true}
                     disabled={
                       this.state.text.length === 0 ||
                       this.state.text.length > this.props.maxLength
@@ -115,6 +115,7 @@ export default class NewTopicModal extends Component {
                     title="+ Submit"
                     accessibilityLabel="Submit"
                     onPress={this.onSubmitTopic}
+                    testID="submit-topic-btn"
                   />
                 </View>
               </TouchableWithoutFeedback>
