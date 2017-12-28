@@ -1,7 +1,7 @@
 export default class TopicDatabase {
   _subscriptionIdIterator = 0;
   _topicIdIterator = 0;
-  maxRecentCount = 20;
+  maxRecentCount = null;
   topics = [];
   subscriptions = {
     // subscriptionId => callback
@@ -15,7 +15,7 @@ export default class TopicDatabase {
 
   constructor(topics, maxRecentCount) {
     this.topics = topics || [];
-    this.maxRecentCount = maxRecentCount || 20;
+    this.maxRecentCount = maxRecentCount || null;
   }
 
   add = content => {
@@ -67,7 +67,10 @@ export default class TopicDatabase {
 
   getLatestTopics = () =>
     // Notice: .slice will create new array
-    this.topics.slice(0, this.maxRecentCount);
+    this.topics.slice(
+      0,
+      this.maxRecentCount !== null ? this.maxRecentCount : this.topics.length,
+    );
 
   notifyTopic = topic => {
     (this.topicSubscriptions[topic.id] || [])
