@@ -2,6 +2,10 @@
 
 React Native Experiment
 
+|Android|iOS|
+|----|----|
+|![android](https://user-images.githubusercontent.com/4214509/34437795-ecf24fb8-ecd3-11e7-9595-5a2d7f0b9782.gif)|![ios](https://user-images.githubusercontent.com/4214509/34437796-ee7979e2-ecd3-11e7-8be6-aa7d2a11ae9c.gif)|
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app) (CRNA), to find the information about performing common tasks, see CREATE-REACT-NATIVE-APP.md.
 
 ## Run the app
@@ -61,6 +65,6 @@ Publishing Expo project:
 ## `TopicDatabase`
 In-memory data storage using Observer pattern.
 
+<img width="678" alt="TopicDatabase" src="https://user-images.githubusercontent.com/4214509/34437793-e999da02-ecd3-11e7-91b3-d7239ae563c3.png">
 
-
-See jsdoc API document in `src/utils/TopicDatabase.js';
+See jsdoc API document in `src/utils/TopicDatabase.js`;
