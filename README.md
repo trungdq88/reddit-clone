@@ -24,7 +24,7 @@ Open Expo app and scan the QR code in this link: https://expo.io/@trungdq88/redd
 Download and install pre-build app. Go to the following links and click the Download button.
 
 - Android: https://expo.io/builds/24788c5f-bfd5-44db-91cc-21a3da2c23b0
-- iOS: (My Apply Developer account expired, so I can't build. Please check other options.)
+- iOS: (My Apple Developer account expired, so I can't build. Please check other options.)
 
 ### Option 3
 Run in development mode from command line:
