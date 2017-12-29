@@ -30,7 +30,11 @@ const add100000Topics = () => {
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Home',
-    headerRight: <Button title="Add 50,000 Topic" onPress={add100000Topics} />,
+    headerRight: (
+      <View style={{ paddingRight: 10 }}>
+        <Button title="Add 50,000 Topic" onPress={add100000Topics} />
+      </View>
+    ),
   };
 
   subscription = null;
