@@ -1,5 +1,14 @@
 {
   "expo": {
-    "sdkVersion": "23.0.0"
+    "sdkVersion": "23.0.0",
+    "name": "Reddit Clone",
+    "version": "1.0.0",
+    "slug": "reddit-clone",
+    "ios": {
+      "bundleIdentifier": "trungdq.reddit.clone"
+    },
+    "android": {
+      "package": "trungdq.reddit.clone"
+    }
   }
 }

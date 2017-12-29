@@ -13,11 +13,24 @@ export default class TopicDatabase {
     /* subscriptionId */
   ];
 
+  /**
+   * @constructor
+   * @param {array} topics - Initial topics, useful to restore from a persistent database if any.
+   * @param {number} maxRecentCount - Number of top topics returns to subscriptions, sorted by upvotes, descending order.
+   * @return {TopicDatabase}
+   */
   constructor(topics, maxRecentCount) {
     this.topics = topics || [];
     this.maxRecentCount = maxRecentCount || null;
   }
 
+  /**
+   * Create new topic with content string.
+   *
+   * @param {string} content - Create new topic with content string.
+   * @return {object} - return Topic object
+   * @public
+   */
   add = content => {
     const topic = {
       id: ++this._topicIdIterator,
@@ -31,6 +44,12 @@ export default class TopicDatabase {
     return topic;
   };
 
+  /**
+   * Increase topic upvote by 1 point
+   *
+   * @param {number} topicId - Topic id
+   * @public
+   */
   upvote = topicId => {
     const topicIndex = this.topics.findIndex(_ => _.id === topicId);
     this.topics[topicIndex] = {
@@ -42,6 +61,12 @@ export default class TopicDatabase {
     this.notifyLatestTopics();
   };
 
+  /**
+   * Increase topic downvote by 1 point
+   *
+   * @param {number} topicId - Topic id
+   * @public
+   */
   downvote = topicId => {
     const topicIndex = this.topics.findIndex(_ => _.id === topicId);
     this.topics[topicIndex] = {
@@ -53,6 +78,11 @@ export default class TopicDatabase {
     this.notifyLatestTopics();
   };
 
+  /**
+   * Sort the topics by upvote then topic id, descending order
+   *
+   * @private
+   */
   sort = () => {
     this.topics.sort((a, b) => {
       if (a.upvote - a.downvote < b.upvote - b.downvote) {
@@ -65,6 +95,12 @@ export default class TopicDatabase {
     });
   };
 
+  /**
+   * Return latest topics sorted by upvotes descending order
+   *
+   * @return {array} - array of `maxRecentCount` topics
+   * @public
+   */
   getLatestTopics = () =>
     // Notice: .slice will create new array
     this.topics.slice(
@@ -84,6 +120,13 @@ export default class TopicDatabase {
       .forEach(callback => callback(this.getLatestTopics()));
   };
 
+  /**
+   * Subscribe to latest topics
+   *
+   * @params {function} callback - which will be triggered when latest topics change (added, removed, modified). Params: array of Topic. Callback will be call the first time immediately after subscribe.
+   * @return {object} - Subscription object with `id` property and `dispose()` method. Calling `dispose()` will stop the subscription.
+   * @public
+   */
   subscribeLatestTopic = callback => {
     const subscriptionId = ++this._subscriptionIdIterator;
     this.subscriptions[subscriptionId] = callback;
@@ -102,6 +145,14 @@ export default class TopicDatabase {
     };
   };
 
+  /**
+   * Subscribe to a topic
+   *
+   * @params {number} topicId - Topic ID to subscribe to
+   * @params {function} callback - callback which will be triggered when the topic properties change (upvote or downvote). Params: Topic object. Callback will be call the first time immediately after subscribe.
+   * @return {object} - Subscription object with `id` property and `dispose()` method. Calling `dispose()` will stop the subscription.
+   * @public
+   */
   subscribeTopic = (topicId, callback) => {
     const subscriptionId = ++this._subscriptionIdIterator;
     this.subscriptions[subscriptionId] = callback;
